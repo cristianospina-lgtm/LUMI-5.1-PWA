@@ -17,14 +17,13 @@ main{width:min(100%,490px);background:rgba(255,255,255,.97);border:1px solid var
 .logo{display:block;width:min(100%,250px);height:auto;max-height:250px;object-fit:contain;margin:0 auto 10px}
 h1{margin:0;color:var(--blue);font-size:32px;letter-spacing:-.8px}
 .subtitle{margin:9px 0 22px;color:var(--muted);line-height:1.55}
-.action{display:block;width:100%;padding:15px 18px;border:0;border-radius:14px;background:linear-gradient(100deg,#0756B8,#079DE0);color:#fff;text-decoration:none;font-weight:750;font-size:16px;box-shadow:0 7px 18px rgba(7,86,184,.18);cursor:pointer;font-family:inherit}
-.action:hover{filter:brightness(1.06)}
-.install{margin-top:11px;background:linear-gradient(100deg,#F28A00,#FFB21A);color:#172B45}
-.install[hidden]{display:none}
-.note{margin:17px 0 0;color:var(--muted);font-size:12px;line-height:1.55}
+.action{display:block;width:100%;padding:15px 18px;border:0;border-radius:14px;color:#fff;text-decoration:none;font-weight:750;font-size:16px;cursor:pointer;font-family:inherit}
+.enter{background:linear-gradient(100deg,#0756B8,#079DE0);box-shadow:0 7px 18px rgba(7,86,184,.18)}
+.install{margin-top:12px;background:linear-gradient(100deg,#F28A00,#FFB21A);color:#172B45;box-shadow:0 7px 18px rgba(242,138,0,.16)}
+.action:hover{filter:brightness(1.05)}
 .help{display:none;margin:14px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#F5FAFF;color:#38516D;text-align:left;font-size:13px;line-height:1.55}
 .help.show{display:block}
-@media(max-width:420px){main{padding:24px 20px}.logo{width:min(100%,215px);max-height:215px}h1{font-size:29px}}
+.note{margin:17px 0 0;color:var(--muted);font-size:12px;line-height:1.55}
 </style>
 </head>
 <body>
@@ -33,97 +32,96 @@ h1{margin:0;color:var(--blue);font-size:32px;letter-spacing:-.8px}
 <h1>LUMI 5.1</h1>
 <p class="subtitle">Gestión territorial integrada en salud</p>
 
-<a class="action" href="https://script.google.com/macros/s/AKfycbxfUMAqVuXjSMEbpO5zbEW5ZQ74oG9RB3yPIls2tMN_a77g0mlkil_3ULfRc1X7cKsiOw/exec" rel="noopener">Ingresar a LUMI</a>
-<button class="action install" id="installButton" type="button">Instalar LUMI 5.1</button>
+<a class="action enter" href="https://script.google.com/macros/s/AKfycbxfUMAqVuXjSMEbpO5zbEW5ZQ74oG9RB3yPIls2tMN_a77g0mlkil_3ULfRc1X7cKsiOw/exec" rel="noopener">Ingresar a LUMI</a>
+<button class="action install" id="installButton" type="button">⬇ Instalar LUMI 5.1</button>
 
 <div class="help" id="installHelp" role="status" aria-live="polite"></div>
-<p class="note" id="statusNote">Accede a la plataforma oficial de LUMI mediante Google Apps Script.</p>
+<p class="note" id="statusNote">La información, autenticación y los procesos se gestionan en la plataforma oficial de LUMI mediante Google Apps Script.</p>
 </main>
 
 <script>
-let deferredInstallPrompt = null;
-const installButton = document.getElementById("installButton");
-const installHelp = document.getElementById("installHelp");
-const statusNote = document.getElementById("statusNote");
+(() => {
+  let deferredInstallPrompt = null;
+  const installButton = document.getElementById("installButton");
+  const installHelp = document.getElementById("installHelp");
+  const statusNote = document.getElementById("statusNote");
 
-function showInstallHelp(message) {
-  installHelp.textContent = message;
-  installHelp.classList.add("show");
-}
-
-function isAppInstalled() {
-  return window.matchMedia("(display-mode: standalone)").matches ||
-         window.matchMedia("(display-mode: fullscreen)").matches ||
-         window.navigator.standalone === true;
-}
-
-function updateInstallState() {
-  if (isAppInstalled()) {
-    installButton.hidden = true;
-    installHelp.classList.remove("show");
-    statusNote.textContent = "LUMI 5.1 está instalada en este dispositivo.";
-  }
-}
-
-window.addEventListener("beforeinstallprompt", (event) => {
-  // Evita que Chrome muestre el aviso automáticamente y permite
-  // iniciar la instalación cuando el usuario pulsa el botón.
-  event.preventDefault();
-  deferredInstallPrompt = event;
-  installButton.hidden = false;
-  installButton.textContent = "Instalar LUMI 5.1";
-});
-
-installButton.addEventListener("click", async () => {
-  if (isAppInstalled()) {
-    updateInstallState();
-    return;
+  function showHelp(message) {
+    installHelp.textContent = message;
+    installHelp.classList.add("show");
   }
 
-  if (deferredInstallPrompt) {
-    deferredInstallPrompt.prompt();
-    const choice = await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
+  function isStandalone() {
+    return window.matchMedia("(display-mode: standalone)").matches ||
+           window.matchMedia("(display-mode: fullscreen)").matches ||
+           window.navigator.standalone === true;
+  }
 
-    if (choice && choice.outcome === "accepted") {
-      showInstallHelp("Solicitud de instalación aceptada. Busca LUMI 5.1 en la pantalla de inicio.");
-    } else {
-      showInstallHelp("La instalación se canceló. Puedes intentarlo nuevamente desde este botón o desde el menú de Chrome.");
+  // El botón permanece visible incluso si Chrome aún no emite beforeinstallprompt.
+  function refreshInstalledState() {
+    if (isStandalone()) {
+      installButton.textContent = "LUMI 5.1 instalada";
+      statusNote.textContent = "Estás utilizando LUMI 5.1 desde la aplicación instalada.";
     }
-    return;
   }
 
-  const ua = navigator.userAgent || "";
-  const isIOS = /iphone|ipad|ipod/i.test(ua) ||
-                (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const isAndroid = /android/i.test(ua);
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installButton.textContent = "⬇ Instalar LUMI 5.1";
+  });
 
-  if (isIOS) {
-    showInstallHelp("Para instalar en iPhone o iPad: abre esta página en Safari, pulsa Compartir y selecciona “Agregar a pantalla de inicio”.");
-  } else if (isAndroid) {
-    showInstallHelp("Chrome todavía no ofrece el aviso automático. Abre el menú ⋮ de Chrome y selecciona “Instalar aplicación” o “Agregar a pantalla principal”. Si no aparece, verifica que estés usando Chrome y que la página termine de cargar.");
-  } else {
-    showInstallHelp("La instalación no está disponible en este momento. En Chrome o Edge, revisa el icono de instalación de la barra de direcciones o el menú del navegador.");
-  }
-});
+  installButton.addEventListener("click", async () => {
+    if (isStandalone()) {
+      showHelp("LUMI 5.1 ya está abierta como aplicación instalada en este dispositivo.");
+      return;
+    }
 
-window.addEventListener("appinstalled", () => {
-  deferredInstallPrompt = null;
-  updateInstallState();
-  showInstallHelp("LUMI 5.1 se instaló correctamente.");
-});
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const result = await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
 
-window.addEventListener("load", () => {
-  updateInstallState();
+      if (result && result.outcome === "accepted") {
+        showHelp("Aceptaste la instalación. Espera a que Android termine de agregar LUMI a tu pantalla de inicio.");
+      } else {
+        showHelp("La instalación fue cancelada. Puedes volver a intentarlo cuando quieras.");
+      }
+      return;
+    }
 
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js")
-      .then(() => console.info("LUMI PWA: Service Worker activo"))
-      .catch(error => console.error("LUMI PWA: error de Service Worker", error));
-  }
-});
+    const ua = navigator.userAgent || "";
+    const isIOS = /iphone|ipad|ipod/i.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isAndroid = /android/i.test(ua);
 
-window.matchMedia("(display-mode: standalone)").addEventListener?.("change", updateInstallState);
+    if (isIOS) {
+      showHelp("En iPhone o iPad: abre esta página en Safari, pulsa Compartir y selecciona “Agregar a pantalla de inicio”.");
+    } else if (isAndroid) {
+      showHelp("Chrome aún no habilitó el cuadro automático. Pulsa ⋮ en Chrome y busca “Instalar aplicación” o “Agregar a pantalla principal”. Si no aparece, comprueba que abriste esta dirección en Chrome y vuelve a intentarlo más tarde.");
+    } else {
+      showHelp("En Chrome o Edge, busca el icono de instalación en la barra de direcciones o abre el menú del navegador y selecciona “Instalar página como aplicación”.");
+    }
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    refreshInstalledState();
+    showHelp("LUMI 5.1 se instaló correctamente.");
+  });
+
+  window.addEventListener("load", async () => {
+    refreshInstalledState();
+    if ("serviceWorker" in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" });
+        registration.update().catch(() => {});
+      } catch (error) {
+        console.error("No se pudo actualizar el Service Worker de LUMI:", error);
+      }
+    }
+  });
+})();
 </script>
 </body>
 </html>
