@@ -1,4 +1,4 @@
-const CACHE_NAME = "lumi-pwa-shell-v2";
+const CACHE_NAME = "lumi-pwa-shell-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -23,9 +23,10 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const request = event.request;
   const url = new URL(request.url);
-  // Solo cachea los archivos estáticos del portal GitHub Pages.
-  // No intercepta Google Apps Script ni datos personales o clínicos.
+  // Solo cachea recursos estáticos del portal. No intercepta Apps Script
+  // ni solicitudes de datos, autenticación o información clínica.
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
+
   event.respondWith(
     fetch(request).then(response => {
       if (response && response.ok) {

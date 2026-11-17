@@ -1,18 +1,22 @@
-# LUMI 5.1 PWA - Logo actualizado
+# LUMI 5.1 PWA - Instalación restaurada
 
-Reemplazo de la pantalla de entrada y los iconos por la identidad visual suministrada.
+Este paquete restaura el control de instalación en la pantalla de bienvenida.
 
-## Archivos
-- `index.html`: pantalla de entrada con el logo de LUMI.
-- `logo-lumi.png`: imagen principal de la mascota.
-- `manifest.json`: configuración de instalación.
-- `sw.js`: caché limitada al portal estático.
-- `icons/icon-192.png`: icono para instalación.
-- `icons/icon-512.png`: icono para instalación.
+## Archivos incluidos
+- `index.html`: botón de instalación, evento `beforeinstallprompt`, detección de instalación y guía manual para Android/iOS.
+- `manifest.json`: metadatos e iconos de la PWA.
+- `sw.js`: caché versionada del portal estático.
+- `logo-lumi.png`: mascota principal.
+- `icons/icon-192.png` y `icons/icon-512.png`: iconos de instalación.
 
-## Actualización
-Subir y reemplazar estos archivos en la raíz del repositorio `LUMI-5.1-PWA`.
-Mantener la carpeta `icons` con los dos PNG dentro.
+## Publicación
+Sube y reemplaza los archivos en la raíz del repositorio `LUMI-5.1-PWA`.
+Mantén los dos iconos dentro de la carpeta `icons`.
 
-La aplicación principal continúa en Google Apps Script. No se modifican backend,
-autenticación, permisos ni base de datos.
+## Notas
+Chrome solo emite `beforeinstallprompt` cuando considera que se cumplen sus criterios de instalación.
+Si el evento no se emite, el botón muestra instrucciones alternativas del navegador.
+En iPhone/iPad, la instalación se realiza desde Safari > Compartir > Agregar a pantalla de inicio.
+
+La aplicación principal sigue alojada en Google Apps Script. Este paquete no modifica backend,
+autenticación, permisos, hojas de cálculo ni módulos.
