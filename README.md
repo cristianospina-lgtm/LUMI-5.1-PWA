@@ -1,19 +1,18 @@
-# LUMI 5.1 PWA
+# LUMI 5.1 PWA - Logo actualizado
 
-Portal instalable para acceder a LUMI 5.1.
+Reemplazo de la pantalla de entrada y los iconos por la identidad visual suministrada.
 
-## Aplicación principal
-https://script.google.com/macros/s/AKfycbxfUMAqVuXjSMEbpO5zbEW5ZQ74oG9RB3yPIls2tMN_a77g0mlkil_3ULfRc1X7cKsiOw/exec
+## Archivos
+- `index.html`: pantalla de entrada con el logo de LUMI.
+- `logo-lumi.png`: imagen principal de la mascota.
+- `manifest.json`: configuración de instalación.
+- `sw.js`: caché limitada al portal estático.
+- `icons/icon-192.png`: icono para instalación.
+- `icons/icon-512.png`: icono para instalación.
 
-## Publicar en GitHub Pages
-1. Subir todos los archivos y carpetas de este paquete a la raíz del repositorio `LUMI-5.1-PWA`.
-2. Abrir Settings > Pages.
-3. En Build and deployment, elegir `Deploy from a branch`.
-4. Seleccionar `main` y `/(root)`.
-5. Guardar y esperar la publicación.
+## Actualización
+Subir y reemplazar estos archivos en la raíz del repositorio `LUMI-5.1-PWA`.
+Mantener la carpeta `icons` con los dos PNG dentro.
 
-## Importante
-GitHub Pages aloja únicamente el portal PWA. La aplicación, autenticación,
-permisos y datos continúan en Google Apps Script. Se requiere conexión a
-Internet para abrir la aplicación principal. El service worker solo cachea
-los archivos estáticos del portal; no almacena información personal ni clínica.
+La aplicación principal continúa en Google Apps Script. No se modifican backend,
+autenticación, permisos ni base de datos.

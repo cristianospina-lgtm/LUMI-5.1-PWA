@@ -1,5 +1,12 @@
-const CACHE_NAME = "lumi-pwa-shell-v1";
-const APP_SHELL = ["./", "./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
+const CACHE_NAME = "lumi-pwa-shell-v2";
+const APP_SHELL = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./logo-lumi.png",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png"
+];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
@@ -16,8 +23,8 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const request = event.request;
   const url = new URL(request.url);
-  // Solo cachea archivos estáticos del portal GitHub Pages.
-  // Nunca intercepta Google Apps Script ni datos personales o clínicos.
+  // Solo cachea los archivos estáticos del portal GitHub Pages.
+  // No intercepta Google Apps Script ni datos personales o clínicos.
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
   event.respondWith(
     fetch(request).then(response => {
